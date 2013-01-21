@@ -9,12 +9,13 @@ You can use the CultuurNet/Auth PHP library in different ways:
 * Inside your project: require the cultuurnet/auth package (it is
   [registered on Packagist](https://packagist.org/packages/cultuurnet/auth)) in your project's composer.json file.
 
-
-    {
-        "require": {
-            "cultuurnet/auth": "dev-master"
-        }
+```json
+{
+    "require": {
+        "cultuurnet/auth": "dev-master"
     }
+}
+```
 
 Command line tool
 ===================
@@ -79,7 +80,7 @@ For added security you can input username and password interactively instead of 
 You can retrieve and/or store commonly necessary configuration data & credentials for authorized communication with the
 different CultuurNet web services in a so-called 'session' file, by specifying the desired location with the ``--file`` option.
 
-You can continue to use a session file in other commands by specifying the ``--file`` option, so you do not to have to
+You can continue to use the session file in other commands by specifying the ``--file`` option again, so you do not to have to
 specify all command line options over and over again.
 
 Please ensure the file is located at a safe place and not accessible by other users, as it will allow others
@@ -87,4 +88,4 @@ to make requests on your behalf. The following items are maintained in a session
 
 * endpoint
 * consumer key & consumer secret
-* access token & token secret
+* access token & token secret retrieved by the ``authorize`` command

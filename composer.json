@@ -8,12 +8,14 @@
     },
     "require-dev": {
         "symfony/console": "dev-master",
-        "justinrainbow/json-schema": "1.1.*"
+        "justinrainbow/json-schema": "1.1.*",
+        "guzzle/plugin-cookie": "3.0.*"
     },
     "autoload": {
         "psr-0": {
             "CultuurNet\\Auth": ["lib"]
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "bin": ["bin/cultuurnet-auth"]
 }

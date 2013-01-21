@@ -15,7 +15,7 @@ use \CultuurNet\Auth\ConsumerCredentials;
 use \CultuurNet\Auth\Session\JsonSessionFile;
 
 /**
- * Base class for all commands which require CultuurNet authentication.
+ * Base class for all commands which require CultuurNet OAuth.
  */
 abstract class Command extends BaseCommand
 {
@@ -117,10 +117,16 @@ abstract class Command extends BaseCommand
         if ($consumerKey) {
             $consumer->setKey($consumerKey);
         }
+        elseif ('' == $consumer->getKey() && isset($preferences['consumer-key'])) {
+            $consumer->setKey($preferences['consumer-key']);
+        }
 
         $consumerSecret = $in->getOption('consumer-secret');
         if ($consumerSecret) {
             $consumer->setSecret($consumerSecret);
+        }
+        else if ('' == $consumer->getSecret() && isset($preferences['consumer-secret'])) {
+            $consumer->setSecret($preferences['consumer-secret']);
         }
     }
 }

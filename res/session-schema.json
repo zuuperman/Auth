@@ -1,0 +1,43 @@
+{
+    "name": "Auth",
+    "type": "object",
+    "required": false,
+    "additionalProperties": false,
+    "properties": {
+        "endpoint": {
+            "type": "string"
+        },
+        "consumer": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "description": ""
+                },
+                "secret": {
+                    "type": "string",
+                    "description": ""
+                }
+            }
+        },
+        "user": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "token": {
+                    "type": "string",
+                    "description": ""
+                },
+                "secret": {
+                    "type": "string",
+                    "description": ""
+                }
+            }
+        }
+    }
+}

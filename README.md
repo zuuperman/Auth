@@ -80,10 +80,10 @@ For added security you can input username and password interactively instead of 
 You can retrieve and/or store commonly necessary configuration data & credentials for authorized communication with the
 different CultuurNet web services in a so-called 'session' file, by specifying the desired location with the ``--file`` option.
 
-You can continue to use the session file in other commands by specifying the ``--file`` option again, so you do not to have to
+You can continue to use the session file in other commands by specifying the ``--file`` option again, so you don't have to
 specify all command line options over and over again.
 
-Please ensure the file is located at a safe place and not accessible by other users, as it will allow others
+Please ensure the session file is located at a safe place and not accessible by other users, as it will allow others
 to make requests on your behalf. The following items are maintained in a session file:
 
 * endpoint

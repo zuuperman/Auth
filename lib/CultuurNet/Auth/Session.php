@@ -77,7 +77,8 @@ class Session
         }
     }
 
-    public function getEndpoints() {
+    public function getEndpoints()
+    {
         return $this->endpoints;
     }
 }

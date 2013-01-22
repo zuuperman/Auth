@@ -22,11 +22,8 @@ Command line tool
 
 The included command line tool is intended for testing and debugging.
 
-Installation
-------------
-The command line tool requires some additional third-party PHP libraries to do the heavy lifting
-(among which the [Symfony Console Component](http://symfony.com/doc/current/components/console/introduction.html)).
-You can also also easily download them with Composer by running ``composer install --dev``.
+Location
+--------
 
 When using CultuurNet\Auth standalone, as a download or clone from github, the command line tool is available at bin/cultuurnet-auth.
 

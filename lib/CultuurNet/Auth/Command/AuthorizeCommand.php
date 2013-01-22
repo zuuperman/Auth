@@ -48,13 +48,13 @@ class AuthorizeCommand extends Command
 
         $consumer = $this->session->getConsumerCredentials();
 
-        $authService = new Service($this->session->getEndpoint(), $consumer);
+        $authService = new Service($this->session->getEndpoint('auth'), $consumer);
 
         $callback = $in->getOption('callback');
 
         $temporaryCredentials = $authService->getRequestToken($callback);
 
-        $client = new Client($this->session->getEndpoint(), array('redirect.disable' => true));
+        $client = new Client($this->session->getEndpoint('auth'), array('redirect.disable' => true));
 
         // @todo check if logging in on UiTiD requires cookies?
         $cookiePlugin = new CookiePlugin(new ArrayCookieJar());

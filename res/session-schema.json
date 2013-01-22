@@ -4,8 +4,9 @@
     "required": false,
     "additionalProperties": false,
     "properties": {
-        "endpoint": {
-            "type": "string"
+        "endpoints": {
+            "type": "object",
+            "additionalProperties": true
         },
         "consumer": {
             "type": "object",

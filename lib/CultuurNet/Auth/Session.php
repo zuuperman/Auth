@@ -15,9 +15,9 @@ class Session
     protected $user;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $endpoint;
+    protected $endpoints;
 
     /**
      * @return ConsumerCredentials
@@ -56,16 +56,28 @@ class Session
     /**
      * @param string $endpoint
      */
-    public function setEndpoint($endpoint)
+    public function setEndpoint($key, $endpoint)
     {
-        $this->endpoint = $endpoint;
+        // @todo check type of $key and $endpoint
+        $this->endpoints[$key] = $endpoint;
     }
 
     /**
+     * @param string $key
      * @return string
      */
-    public function getEndpoint()
+    public function getEndpoint($key)
     {
-        return $this->endpoint;
+        // @todo check type of $key
+        if (isset($this->endpoints[$key])) {
+            return $this->endpoints[$key];
+        }
+        else {
+            return NULL;
+        }
+    }
+
+    public function getEndpoints() {
+        return $this->endpoints;
     }
 }

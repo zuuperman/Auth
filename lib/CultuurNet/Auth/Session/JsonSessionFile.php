@@ -39,8 +39,10 @@ class JsonSessionFile implements SessionFileInterface
 
         $session = new Session();
 
-        if (isset($data->endpoint)) {
-            $session->setEndpoint($data->endpoint);
+        if (isset($data->endpoints)) {
+            foreach (get_object_vars($data->endpoints) as $key => $endpoint) {
+                $session->setEndpoint($key, $endpoint);
+            }
         }
 
         if (isset($data->consumer)) {
@@ -84,9 +86,9 @@ class JsonSessionFile implements SessionFileInterface
             );
         }
 
-        $endpoint = $session->getEndpoint();
-        if (NULL != $endpoint) {
-            $hash['endpoint'] = $endpoint;
+        $endpoints = $session->getEndpoints();
+        if (!empty($endpoints)) {
+            $hash['endpoints'] = $endpoints;
         }
 
         $json = json_encode($hash);

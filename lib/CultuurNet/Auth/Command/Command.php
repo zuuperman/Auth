@@ -74,7 +74,7 @@ abstract class Command extends BaseCommand
                 'endpoint',
                 NULL,
                 InputOption::VALUE_REQUIRED,
-                'Base URL of the UiTiD endpoint to authenticate with'
+                'Base URL of the UiTiD endpoint to authorize with'
             )
             ->addOption(
                 'file',
@@ -100,11 +100,11 @@ abstract class Command extends BaseCommand
 
         $endpoint = $in->getOption('endpoint');
         if ($endpoint) {
-            $this->session->setEndpoint($endpoint);
+            $this->session->setEndpoint('auth', $endpoint);
         }
-        else if ('' == $this->session->getEndpoint()) {
+        else if ('' == $this->session->getEndpoint('auth')) {
             $endpoint = isset($preferences['endpoint']) ? $preferences['endpoint'] : $defaultEndpoint;
-            $this->session->setEndpoint($endpoint);
+            $this->session->setEndpoint('auth', $endpoint);
         }
 
         $consumer = $this->session->getConsumerCredentials();

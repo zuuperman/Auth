@@ -39,9 +39,9 @@ class JsonSessionFile implements SessionFileInterface
 
         $session = new Session();
 
-        if (isset($data->endpoints)) {
-            foreach (get_object_vars($data->endpoints) as $key => $endpoint) {
-                $session->setEndpoint($key, $endpoint);
+        if (isset($data->baseUrls)) {
+            foreach (get_object_vars($data->baseUrls) as $api => $baseUrl) {
+                $session->setBaseUrl($api, $baseUrl);
             }
         }
 
@@ -86,9 +86,9 @@ class JsonSessionFile implements SessionFileInterface
             );
         }
 
-        $endpoints = $session->getEndpoints();
-        if (!empty($endpoints)) {
-            $hash['endpoints'] = $endpoints;
+        $baseUrls = $session->getBaseUrls();
+        if (!empty($baseUrls)) {
+            $hash['baseUrls'] = $baseUrls;
         }
 
         $json = json_encode($hash);

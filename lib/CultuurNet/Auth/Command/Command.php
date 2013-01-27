@@ -25,23 +25,30 @@ abstract class Command extends BaseCommand
     protected $session;
 
     /**
+     * @var array
+     */
+    private $defaults;
+
+    /**
      * @return array
      */
-    protected function getUserPreferences()
+    protected function getDefaults()
     {
-        // get user preferences
-        $homeDir = getenv('HOME');
-        $confFile = "{$homeDir}/.cultuurnet/auth";
+        if (!isset($this->defaults)) {
+            // get defaults from INI file in current user's home directory
+            $homeDir = getenv('HOME');
+            $confFile = "{$homeDir}/.cultuurnet/defaults";
 
-        // @todo Consider using a typed object to hold preferences.
-        if (file_exists($confFile)) {
-            $preferences = parse_ini_file($confFile);
-        }
-        else {
-            $preferences = array();
+            // @todo Consider using a typed object to hold defaults
+            if (file_exists($confFile)) {
+                $this->defaults = parse_ini_file($confFile);
+            }
+            else {
+                $this->defaults = array();
+            }
         }
 
-        return $preferences;
+        return $this->defaults;
     }
 
     /**
@@ -71,43 +78,28 @@ abstract class Command extends BaseCommand
                 'Consumer secret'
             )
             ->addOption(
-                'endpoint',
-                NULL,
+                'session',
+                's',
                 InputOption::VALUE_REQUIRED,
-                'Base URL of the UiTiD endpoint to authorize with'
-            )
-            ->addOption(
-                'file',
-                'f',
-                InputOption::VALUE_REQUIRED,
-                'File to use for maintaining session (endpoint, consumer key, secret and user access token, secret) accross invocations of the command line client'
+                'File to use for maintaining session (base URLs, consumer key, secret and user access token, secret) accross invocations of the command line client'
             );
     }
 
     protected function execute(InputInterface $in, OutputInterface $out)
     {
-        $file = $in->getOption('file');
-        if (NULL !== $file) {
+        $sessionFile = $in->getOption('session');
+        if (NULL !== $sessionFile) {
             // @todo Catch JsonValidationException and show errors.
-            $this->session = JsonSessionFile::read($file);
+            $this->session = JsonSessionFile::read($sessionFile);
         }
         else {
             $this->session = new Session();
         }
 
-        $defaultEndpoint = 'http://test.uitid.be/culturefeed/rest';
-        $preferences = $this->getUserPreferences();
-
-        $endpoint = $in->getOption('endpoint');
-        if ($endpoint) {
-            $this->session->setEndpoint('auth', $endpoint);
-        }
-        else if ('' == $this->session->getEndpoint('auth')) {
-            $endpoint = isset($preferences['endpoint']) ? $preferences['endpoint'] : $defaultEndpoint;
-            $this->session->setEndpoint('auth', $endpoint);
-        }
+        $defaults = $this->getDefaults();
 
         $consumer = $this->session->getConsumerCredentials();
+
         if (!$consumer) {
             $consumer = new ConsumerCredentials();
             $this->session->setConsumerCredentials($consumer);
@@ -117,16 +109,46 @@ abstract class Command extends BaseCommand
         if ($consumerKey) {
             $consumer->setKey($consumerKey);
         }
-        elseif ('' == $consumer->getKey() && isset($preferences['consumer-key'])) {
-            $consumer->setKey($preferences['consumer-key']);
+        elseif ('' == $consumer->getKey() && isset($defaults['consumer-key'])) {
+            $consumer->setKey($defaults['consumer-key']);
         }
 
         $consumerSecret = $in->getOption('consumer-secret');
         if ($consumerSecret) {
             $consumer->setSecret($consumerSecret);
         }
-        else if ('' == $consumer->getSecret() && isset($preferences['consumer-secret'])) {
-            $consumer->setSecret($preferences['consumer-secret']);
+        else if ('' == $consumer->getSecret() && isset($defaults['consumer-secret'])) {
+            $consumer->setSecret($defaults['consumer-secret']);
         }
+    }
+
+    /**
+     *
+     */
+    protected function resolveBaseUrl($api, InputInterface $in = NULL, $default = 'http://test.uitid.be/culturefeed/rest')
+    {
+        if (NULL === $this->session) {
+            // @todo throw exception as session isn't initialized yet
+        }
+
+        if ($in->hasOption($api . '-base-url')) {
+            $baseUrl = $in->getOption($api . '-base-url');
+        }
+        else if ($in->hasOption('base-url')) {
+            $baseUrl = $in->getOption('base-url');
+        }
+
+        if (isset($baseUrl)) {
+            $this->session->setBaseUrl($api, $baseUrl);
+        }
+        else if ('' == $this->session->getBaseUrl($api)) {
+            $baseUrl = isset($this->defaults['base-url'][$api]) ? $this->defaults['base-url'][$api] : $default;
+            $this->session->setBaseUrl($api, $baseUrl);
+        }
+        else {
+            $baseUrl = $this->session->getBaseUrl($api);
+        }
+
+        return $baseUrl;
     }
 }

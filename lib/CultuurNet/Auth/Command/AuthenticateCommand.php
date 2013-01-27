@@ -15,13 +15,19 @@ use \Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
 use \CultuurNet\Auth\Guzzle\Service;
 use \CultuurNet\Auth\Session\JsonSessionFile;
 
-class AuthorizeCommand extends Command
+class AuthenticateCommand extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('authorize')
-            ->setDescription('Perform 3-legged authorization')
+            ->setName('authenticate')
+            ->setDescription('Perform OAuth authentication')
+            ->addOption(
+                'base-url',
+                NULL,
+                InputOption::VALUE_REQUIRED,
+                'Base URL of the UiTiD service provider to authenticate with'
+            )
             ->addOption(
                 'username',
                 'u',
@@ -38,6 +44,7 @@ class AuthorizeCommand extends Command
                 'callback',
                 NULL,
                 InputOption::VALUE_REQUIRED,
+                'OAuth callback, for demonstrational purposes',
                 'http://example.com'
             );
     }
@@ -48,13 +55,15 @@ class AuthorizeCommand extends Command
 
         $consumer = $this->session->getConsumerCredentials();
 
-        $authService = new Service($this->session->getEndpoint('auth'), $consumer);
+        $authBaseUrl = $this->resolveBaseUrl('auth', $in);
+
+        $authService = new Service($authBaseUrl, $consumer);
 
         $callback = $in->getOption('callback');
 
         $temporaryCredentials = $authService->getRequestToken($callback);
 
-        $client = new Client($this->session->getEndpoint('auth'), array('redirect.disable' => true));
+        $client = new Client($authBaseUrl, array('redirect.disable' => true));
 
         // @todo check if logging in on UiTiD requires cookies?
         $cookiePlugin = new CookiePlugin(new ArrayCookieJar());
@@ -105,9 +114,9 @@ class AuthorizeCommand extends Command
         $out->writeln('access token: ' . $user->getTokenCredentials()->getToken());
         $out->writeln('access token secret: ' . $user->getTokenCredentials()->getSecret());
 
-        $file = $in->getOption('file');
-        if (NULL !== $file) {
-            JsonSessionFile::write($this->session, $file);
+        $sessionFile = $in->getOption('session');
+        if (NULL !== $sessionFile) {
+            JsonSessionFile::write($this->session, $sessionFile);
         }
     }
 }

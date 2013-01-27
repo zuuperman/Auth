@@ -4,7 +4,7 @@
     "required": false,
     "additionalProperties": false,
     "properties": {
-        "endpoints": {
+        "baseUrls": {
             "type": "object",
             "additionalProperties": true
         },

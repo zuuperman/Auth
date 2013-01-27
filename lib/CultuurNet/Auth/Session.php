@@ -17,7 +17,7 @@ class Session
     /**
      * @var array
      */
-    protected $endpoints;
+    protected $baseUrls;
 
     /**
      * @return ConsumerCredentials
@@ -56,29 +56,29 @@ class Session
     /**
      * @param string $endpoint
      */
-    public function setEndpoint($key, $endpoint)
+    public function setBaseUrl($api, $url)
     {
         // @todo check type of $key and $endpoint
-        $this->endpoints[$key] = $endpoint;
+        $this->baseUrls[$api] = $url;
     }
 
     /**
      * @param string $key
      * @return string
      */
-    public function getEndpoint($key)
+    public function getBaseUrl($api)
     {
-        // @todo check type of $key
-        if (isset($this->endpoints[$key])) {
-            return $this->endpoints[$key];
+        // @todo check type of $api
+        if (isset($this->baseUrls[$api])) {
+            return $this->baseUrls[$api];
         }
         else {
             return NULL;
         }
     }
 
-    public function getEndpoints()
+    public function getBaseUrls()
     {
-        return $this->endpoints;
+        return $this->baseUrls;
     }
 }

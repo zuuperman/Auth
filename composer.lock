@@ -1,9 +1,9 @@
 {
-    "hash": "38b7ff0179b2db2036521971fa1828be",
+    "hash": "8361cef63a2c3aa94a0b9b118fd7074a",
     "packages": [
         {
             "name": "guzzle/common",
-            "version": "dev-master",
+            "version": "v3.1.1",
             "target-dir": "Guzzle/Common",
             "source": {
                 "type": "git",
@@ -47,7 +47,7 @@
         },
         {
             "name": "guzzle/http",
-            "version": "dev-master",
+            "version": "v3.1.1",
             "target-dir": "Guzzle/Http",
             "source": {
                 "type": "git",
@@ -104,7 +104,7 @@
         },
         {
             "name": "guzzle/parser",
-            "version": "dev-master",
+            "version": "v3.1.1",
             "target-dir": "Guzzle/Parser",
             "source": {
                 "type": "git",
@@ -148,7 +148,7 @@
         },
         {
             "name": "guzzle/plugin-cookie",
-            "version": "dev-master",
+            "version": "v3.1.1",
             "target-dir": "Guzzle/Plugin/Cookie",
             "source": {
                 "type": "git",
@@ -197,7 +197,7 @@
         },
         {
             "name": "guzzle/plugin-oauth",
-            "version": "dev-master",
+            "version": "v3.1.1",
             "target-dir": "Guzzle/Plugin/Oauth",
             "source": {
                 "type": "git",
@@ -247,7 +247,7 @@
         },
         {
             "name": "guzzle/stream",
-            "version": "dev-master",
+            "version": "v3.1.1",
             "target-dir": "Guzzle/Stream",
             "source": {
                 "type": "git",
@@ -399,39 +399,34 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "dev-master",
+            "version": "v2.1.7",
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher",
-                "reference": "1ba2e333b644ac0a0e5ef751d514dd01b3a26e9d"
+                "reference": "v2.1.7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/EventDispatcher/archive/1ba2e333b644ac0a0e5ef751d514dd01b3a26e9d.zip",
-                "reference": "1ba2e333b644ac0a0e5ef751d514dd01b3a26e9d",
+                "url": "https://github.com/symfony/EventDispatcher/archive/v2.1.7.zip",
+                "reference": "v2.1.7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "symfony/dependency-injection": "2.2.*"
+                "symfony/dependency-injection": "2.1.*"
             },
             "suggest": {
-                "symfony/dependency-injection": "2.2.*",
-                "symfony/http-kernel": "2.2.*"
+                "symfony/dependency-injection": "2.1.*",
+                "symfony/http-kernel": "2.1.*"
             },
-            "time": "2013-01-17 15:25:59",
+            "time": "2013-01-11 00:31:43",
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.2-dev"
-                }
-            },
             "autoload": {
                 "psr-0": {
-                    "Symfony\\Component\\EventDispatcher\\": ""
+                    "Symfony\\Component\\EventDispatcher": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",

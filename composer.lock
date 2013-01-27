@@ -1,5 +1,5 @@
 {
-    "hash": "687743221de01228aa40c73aa153e24e",
+    "hash": "38b7ff0179b2db2036521971fa1828be",
     "packages": [
         {
             "name": "guzzle/common",
@@ -357,18 +357,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console",
-                "reference": "b76fc0d327cb8d90ef0d685f3d696dab714b8327"
+                "reference": "fdb2d9320106926266a0f7a5a97aab7213e11ad6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/Console/archive/b76fc0d327cb8d90ef0d685f3d696dab714b8327.zip",
-                "reference": "b76fc0d327cb8d90ef0d685f3d696dab714b8327",
+                "url": "https://github.com/symfony/Console/archive/fdb2d9320106926266a0f7a5a97aab7213e11ad6.zip",
+                "reference": "fdb2d9320106926266a0f7a5a97aab7213e11ad6",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2013-01-17 15:25:59",
+            "time": "2013-01-24 15:55:08",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -456,7 +456,7 @@
     "aliases": [
 
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {
         "symfony/console": 20
     }

@@ -7,7 +7,7 @@
         "guzzle/http": "3.0.*",
         "guzzle/plugin-oauth": "3.0.*",
         "guzzle/plugin-cookie": "3.0.*",
-        "symfony/console": "dev-master",
+        "symfony/console": "2.2.*@dev",
         "justinrainbow/json-schema": "1.1.*"
     },
     "autoload": {
@@ -15,6 +15,10 @@
             "CultuurNet\\Auth": ["lib"]
         }
     },
-    "minimum-stability": "dev",
-    "bin": ["bin/cultuurnet-auth"]
+    "bin": ["bin/cultuurnet-auth"],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
 }

@@ -96,6 +96,7 @@ To login with your UiTiD, you need to specify your username and password. The co
 * intercepts the returned OAuth verifier,
 * and finally exchanges the temporary credentials for access token credentials.
 
+
     $ ./vendor/bin/cultuurnet-auth --consumer-key=76163fc774cb42246d9de37cadeece8a --consumer-secret=fff975c5a8c7ba19ce92969c1879b211 --username=foo --password=bar authenticate
 
 For added security you can input username and password interactively instead of using command line options.

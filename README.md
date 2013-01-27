@@ -94,16 +94,27 @@ To login with your UiTiD, you need to specify your username and password. The co
 * posts your username and password to the UiTiD service provider,
 * authorizes the consumer there as well,
 * intercepts the returned OAuth verifier,
-* and finally exchanges the temporary credentials for access token credentials.
+* and finally exchanges the temporary credentials for access token credentials
 
-
-    $ ./vendor/bin/cultuurnet-auth --consumer-key=76163fc774cb42246d9de37cadeece8a --consumer-secret=fff975c5a8c7ba19ce92969c1879b211 --username=foo --password=bar authenticate
+```
+$ ./vendor/bin/cultuurnet-auth \
+> --consumer-key=76163fc774cb42246d9de37cadeece8a \
+> --consumer-secret=fff975c5a8c7ba19ce92969c1879b211 \
+> --username=foo \
+> --password=bar \
+authenticate
+```
 
 For added security you can input username and password interactively instead of using command line options.
 
-    $ ./vendor/bin/cultuurnet-auth --consumer-key=76163fc774cb42246d9de37cadeece8a --consumer-secret=fff975c5a8c7ba19ce92969c1879b211 authenticate
-    User name: foo
-    Password:
+```
+$ ./vendor/bin/cultuurnet-auth \
+> --consumer-key=76163fc774cb42246d9de37cadeece8a \
+> --consumer-secret=fff975c5a8c7ba19ce92969c1879b211 \
+> authenticate
+User name: foo
+Password:
+```
 
 You can retrieve and/or store commonly necessary configuration data & credentials for authorized communication with the
 different CultuurNet web services in a so-called 'session' file, by specifying the desired location with the

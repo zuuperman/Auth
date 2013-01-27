@@ -22,12 +22,14 @@ You can install the CultuurNet\Auth PHP library in different ways:
   the root of the clone to download the necessary dependencies. Standalone usage is probably only useful for testing
   purposes.
 * Inside your project: require the cultuurnet/auth package (it is
-  [registered on Packagist][packagist]) in your project's composer.json file and run ``composer update``.
+  [registered on Packagist][packagist]) and the 2.2 dev version of the symfony/console package in your project's
+  composer.json file and run ``composer update``.
 
 ```json
 {
     "require": {
-        "cultuurnet/auth": "1.0.*@dev"
+        "cultuurnet/auth": "1.0.*@dev",
+        "symfony/console": "2.2.*@dev"
     }
 }
 ```

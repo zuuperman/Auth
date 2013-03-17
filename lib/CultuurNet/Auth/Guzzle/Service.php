@@ -127,7 +127,7 @@ class Service implements ServiceInterface
             $query = new AuthorizeOptionsQueryString();
         }
 
-        $query->set('oauth_token', $requestTokenPair->getToken());
+        $query->set('oauth_token', $temporaryCredentials->getToken());
 
         $url = $this->getUrlForPath('auth/authorize');
         $url->setQuery($query);

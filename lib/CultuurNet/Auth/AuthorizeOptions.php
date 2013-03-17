@@ -22,12 +22,6 @@ class AuthorizeOptions
     protected $type;
 
     /**
-     * The URL of the page to redirect the user back to after authorization has been handled on provider.
-     * @var string
-     */
-    protected $callback;
-
-    /**
      * @var bool
      */
     protected $skipAuthorization;
@@ -101,25 +95,6 @@ class AuthorizeOptions
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * @param string $callback
-     * @return AuthorizeOptions
-     */
-    public function setCallback($callback)
-    {
-        $this->callback = $callback;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCallback()
-    {
-        return $this->callback;
     }
 
     /**

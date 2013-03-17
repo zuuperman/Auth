@@ -21,11 +21,6 @@ class AuthorizeOptionsQueryString extends QueryString
             $q->set('via', $via);
         }
 
-        $callback = $options->getCallback();
-        if ($callback) {
-            $q->set('callback', $callback);
-        }
-
         if ($options->getSkipConfirmation()) {
             $q->set('skipConfirmation', 'true');
         }

@@ -13,68 +13,15 @@ use \Guzzle\Http\Url;
 use \Guzzle\Plugin\Oauth\OauthPlugin;
 
 
-class Service implements ServiceInterface
+class Service extends OAuthProtectedService implements ServiceInterface
 {
     /**
-     * @var \Guzzle\Http\Client
+     * @param string $baseUrl
+     * @param ConsumerCredentials $consumerCredentials
      */
-    protected $client;
-
-    /**
-     * @var \Guzzle\Http\Url
-     */
-    protected $endpoint;
-
-    /**
-     * @var Consumer
-     */
-    protected $consumer;
-
-    /**
-     *
-     */
-    protected $oAuthPlugin;
-
-    /**
-     * @var \Guzzle\Http\Client
-     */
-    protected $baseClient;
-
-    /**
-     * @param string $endpoint
-     * @param ConsumerCredentials $consumer
-     */
-    public function __construct($endpoint, ConsumerCredentials $consumer)
+    public function __construct($baseUrl, ConsumerCredentials $consumerCredentials)
     {
-        // @todo check type of endpoint
-        $this->endpoint = Url::factory($endpoint);
-
-        $this->consumer = $consumer;
-
-        // @todo lazy-load client in separate member method
-        $this->baseClient = new Client();
-        $this->baseClient->setBaseUrl($endpoint);
-
-        $this->client = clone $this->baseClient;
-
-        $oAuth = new OauthPlugin(array(
-            'consumer_key' => $consumer->getKey(),
-            'consumer_secret' => $consumer->getSecret(),
-        ));
-
-        $this->client->addSubscriber($oAuth);
-    }
-
-    /**
-     * @param string $path
-     * @return \Guzzle\Http\Url
-     */
-    protected function getUrlForPath($path) {
-        // @todo check type of $path
-        $url = clone $this->endpoint;
-        $url->addPath($path);
-
-        return $url;
+        parent::__construct($baseUrl, $consumerCredentials);
     }
 
     public function getRequestToken($callback = NULL) {
@@ -82,7 +29,10 @@ class Service implements ServiceInterface
         if ($callback) {
             $data['oauth_callback'] = $callback;
         }
-        $request = $this->client->post('requestToken', NULL, $data);
+
+        $client = $this->getClient();
+
+        $request = $client->post('requestToken', NULL, $data);
 
         $response = $request->send();
 
@@ -149,17 +99,10 @@ class Service implements ServiceInterface
             'oauth_verifier' => $oAuthVerifier,
         );
 
-        $client = clone $this->baseClient;
+        $httpClientFactory = $this->getHttpClientFactory();
+        $client = $httpClientFactory->createClient($this->baseUrl, $this->consumerCredentials, $temporaryCredentials);
 
-        $oAuth = new OauthPlugin(array(
-            'consumer_key' => $this->consumer->getKey(),
-            'consumer_secret' => $this->consumer->getSecret(),
-            'token' => $temporaryCredentials->getToken(),
-            'token_secret' => $temporaryCredentials->getSecret(),
-        ));
-        $client->addSubscriber($oAuth);
-
-        $response = $this->client->post('accessToken', NULL, $data)->send();
+        $response = $client->post('accessToken', NULL, $data)->send();
         if ($response->getContentType() != 'application/x-www-form-urlencoded') {
             // @todo throw exception
         }

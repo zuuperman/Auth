@@ -94,7 +94,7 @@ class Service implements ServiceInterface
         }
 
         parse_str($response->getBody(TRUE), $q);
-        var_dump($q);
+
         // @todo check if valid response
         $token = $q['oauth_token'];
         $secret = $q['oauth_token_secret'];

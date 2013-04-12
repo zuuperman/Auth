@@ -5,12 +5,17 @@ namespace CultuurNet\Auth\Command;
 use \Symfony\Component\Console\Input\InputOption;
 use \Symfony\Component\Console\Input\InputInterface;
 use \Symfony\Component\Console\Output\OutputInterface;
+use \Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 use \Guzzle\Http\Client;
 use \Guzzle\Http\Url;
 
+use \Guzzle\Log\ClosureLogAdapter;
+
 use \Guzzle\Plugin\Cookie\CookiePlugin;
 use \Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
+
+use \Guzzle\Plugin\Log\LogPlugin;
 
 use \CultuurNet\Auth\Guzzle\Service;
 use \CultuurNet\Auth\Session\JsonSessionFile;
@@ -46,6 +51,12 @@ class AuthenticateCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'OAuth callback, for demonstrational purposes',
                 'http://example.com'
+            )
+            ->addOption(
+                'debug',
+                NULL,
+                InputOption::VALUE_NONE,
+                'Output full HTTP traffic for debugging purposes'
             );
     }
 
@@ -58,6 +69,17 @@ class AuthenticateCommand extends Command
         $authBaseUrl = $this->resolveBaseUrl('auth', $in);
 
         $authService = new Service($authBaseUrl, $consumer);
+
+        if (TRUE == $in->getOption('debug')) {
+            $adapter = new ClosureLogAdapter(function ($message, $priority, $extras) use ($out) {
+                // @todo handle $priority
+                $out->writeln($message);
+            });
+            $format = "\n\n# Request:\n{request}\n\n# Response:\n{response}\n\n# Errors: {curl_code} {curl_error}\n\n";
+            $log = new LogPlugin($adapter, $format);
+
+            $authService->getHttpClientFactory()->addSubscriber($log);
+        }
 
         $callback = $in->getOption('callback');
 

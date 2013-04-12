@@ -7,6 +7,8 @@ use CultuurNet\Auth\TokenCredentials;
 
 use Guzzle\Http\Client;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
 interface HttpClientFactory
 {
   /**
@@ -17,4 +19,12 @@ interface HttpClientFactory
    * @return Client
    */
   public function createClient($baseUrl, ConsumerCredentials $consumer, TokenCredentials $tokenCredentials);
+
+
+    /**
+     * @param EventSubscriberInterface $subscriber
+     *
+     * @return $this
+     */
+    public function addSubscriber(EventSubscriberInterface $subscriber);
 }

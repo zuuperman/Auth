@@ -8,8 +8,15 @@ use CultuurNet\Auth\TokenCredentials;
 use Guzzle\Http\Client;
 use Guzzle\Plugin\Oauth\OauthPlugin;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
 class DefaultHttpClientFactory implements HttpClientFactory
 {
+    /**
+     * @var array list of subscribers
+     */
+    protected $subscribers = array();
+
     /**
      * @param string $baseUrl
      * @param ConsumerCredentials $consumerCredentials
@@ -17,7 +24,7 @@ class DefaultHttpClientFactory implements HttpClientFactory
      *
      * @return Client
      */
-    public function createClient($baseUrl, ConsumerCredentials $consumerCredentials, TokenCredentials $tokenCredentials = NULL)
+    public function createClient($baseUrl, ConsumerCredentials $consumerCredentials, TokenCredentials $tokenCredentials = null)
     {
         $oAuthConfig = array(
             'consumer_key' => $consumerCredentials->getKey(),
@@ -39,6 +46,19 @@ class DefaultHttpClientFactory implements HttpClientFactory
             ->setBaseUrl($baseUrl)
             ->addSubscriber($oAuth);
 
+        foreach ($this->subscribers as $subscriber) {
+            $client->addSubscriber($subscriber);
+        }
+
         return $client;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addSubscriber(EventSubscriberInterface $subscriber) {
+        $this->subscribers[] = $subscriber;
+
+        return $this;
     }
 }

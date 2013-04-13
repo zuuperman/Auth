@@ -28,8 +28,7 @@ You can install the CultuurNet\Auth PHP library in different ways:
 ```json
 {
     "require": {
-        "cultuurnet/auth": "1.0.*@dev",
-        "symfony/console": "2.2.*@dev"
+        "cultuurnet/auth": "1.0.*@dev"
     }
 }
 ```

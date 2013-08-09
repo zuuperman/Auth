@@ -75,8 +75,7 @@ abstract class OAuthProtectedService
     /**
      * @return Client
      */
-    protected function getClient()
-    {
+    protected function getClient() {
         if (!isset($this->client)) {
             $httpClientFactory = $this->getHttpClientFactory();
             $this->client = $httpClientFactory->createClient($this->baseUrl, $this->consumerCredentials, $this->tokenCredentials);
@@ -85,7 +84,14 @@ abstract class OAuthProtectedService
         return $this->client;
     }
 
-    /**
+  /**
+   * Enable the logging of requests.
+   */
+  public function enableLogging() {
+    $this->getClient()->addSubscriber(\CultuurNet\Auth\Guzzle\Log\RequestLog::getInstance());
+  }
+
+  /**
      * @param string $path
      * @return \Guzzle\Http\Url
      */

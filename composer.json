@@ -9,7 +9,7 @@
         "guzzle/plugin-cookie": "3.1.*",
         "guzzle/plugin-log": "3.1.*",
         "symfony/console": "2.2.*",
-        "justinrainbow/json-schema": "1.1.*"
+        "justinrainbow/json-schema": "1.3.*"
     },
     "autoload": {
         "psr-0": {

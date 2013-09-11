@@ -114,6 +114,7 @@ abstract class OAuthProtectedService
 
   /**
    * Enable the logging of requests.
+   * @deprecated Use addSubscriber() instead.
    */
   public function enableLogging() {
     $this->getClient()->addSubscriber(\CultuurNet\Auth\Guzzle\Log\RequestLog::getInstance());

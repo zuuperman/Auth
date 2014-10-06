@@ -7,7 +7,9 @@ use \CultuurNet\Auth\TokenCredentials;
 
 use \Guzzle\Http\Client;
 use \Guzzle\Http\Url;
-use \Guzzle\Plugin\Oauth\OauthPlugin;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 abstract class OAuthProtectedService
 {
@@ -35,6 +37,11 @@ abstract class OAuthProtectedService
      * @var HttpClientFactory
      */
     private $httpClientFactory;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
   /**
      * @param string $baseUrl
@@ -84,8 +91,30 @@ abstract class OAuthProtectedService
         return $this->client;
     }
 
+    /**
+     * @return EventDispatcherInterface
+     */
+    protected function getEventDispatcher() {
+        if (!isset($this->eventDispatcher)) {
+            $this->eventDispatcher = new EventDispatcher();
+        }
+
+        return $this->eventDispatcher;
+    }
+
+    /**
+     * @param EventSubscriberInterface $subscriber
+     */
+    public function addSubscriber(EventSubscriberInterface $subscriber) {
+        $this->getEventDispatcher()->addSubscriber($subscriber);
+
+        // Also add the subscriber to the Guzzle HTTP client.
+        $this->getClient()->addSubscriber($subscriber);
+    }
+
   /**
    * Enable the logging of requests.
+   * @deprecated Use addSubscriber() instead.
    */
   public function enableLogging() {
     $this->getClient()->addSubscriber(\CultuurNet\Auth\Guzzle\Log\RequestLog::getInstance());

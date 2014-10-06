@@ -4,10 +4,10 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=5.3.0",
-        "guzzle/http": "3.1.*",
-        "guzzle/plugin-oauth": "3.1.*",
-        "guzzle/plugin-cookie": "3.1.*",
-        "guzzle/plugin-log": "3.1.*",
+        "guzzle/http": "3.*",
+        "guzzle/plugin-oauth": "3.*",
+        "guzzle/plugin-cookie": "3.*",
+        "guzzle/plugin-log": "3.*",
         "symfony/console": "2.2.*",
         "justinrainbow/json-schema": "1.3.*"
     },

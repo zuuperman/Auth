@@ -7,10 +7,10 @@ Prerequisites
 =============
 
 You'll need an OAuth consumer key & secret pair. You can find a regulary refreshed pair for testing purposes in the
-[UiTiD manual][uitid_docs]. These credentials are valid for the base URL http://test.uitid.be/culturefeed/rest.
+[UiTiD manual][uitid_docs]. These credentials are valid for the base URL http://acc.uitid.be/uitid/rest.
 
 You will need to register for an UiTiD account as well. Append /auth/register' to the base URL (for example
-http://test.uitid.be/culturefeed/rest/auth/register), visit the resulting URL with your web browser and fill out the
+http://acc.uitid.be/uitid/rest/auth/register), visit the resulting URL with your web browser and fill out the
 registration form.
 
 Installation
@@ -78,7 +78,7 @@ An example of how the contents of the file could look like:
 ```ini
 consumer-key=76163fc774cb42246d9de37cadeece8a
 consumer-secret=fff975c5a8c7ba19ce92969c1879b211
-base-url[auth]=http://test.uitid.be/culturefeed/rest
+base-url[auth]=http://acc.uitid.be/uitid/rest
 ```
 
 The authenticate command

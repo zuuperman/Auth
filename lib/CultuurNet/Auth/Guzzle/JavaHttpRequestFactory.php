@@ -6,9 +6,9 @@
 
 namespace CultuurNet\Auth\Guzzle;
 
-use Guzzle\Common\Collection;
-use Guzzle\Http\EntityBody;
 use Guzzle\Http\Message\RequestFactory;
+use Guzzle\Http\Message\RequestInterface;
+use Guzzle\Http\QueryAggregator\DuplicateAggregator;
 
 /**
  * HTTP request factory for CultuurNet's Java-based webservices.
@@ -18,14 +18,15 @@ class JavaHttpRequestFactory extends RequestFactory
     /**
      * {@inheritdoc}
      */
-    public function create($method, $url, $headers = null, $body = null)
+    public function create($method, $url, $headers = null, $body = null, array $options = array())
     {
-        $request = parent::create($method, $url, $headers, $body);
+        /** @var RequestInterface $request */
+        $request = parent::create($method, $url, $headers, $body, $options);
 
         // Java web services do not expect [] behind multi-valued query string parameter names.
         // PHP: foo[]=1&foo[]=2
         // Java: foo=1&foo=2
-        $request->getQuery()->setAggregateFunction(array('\Guzzle\Http\QueryString', 'aggregateUsingDuplicates'));
+        $request->getQuery()->setAggregator(new DuplicateAggregator());
 
         return $request;
     }

@@ -20,7 +20,9 @@ class OAuth extends OauthPlugin
                     unset($data[$key]);
                     break;
                 case 'array':
-                    usort($value, 'strcmp');
+                    usort($value, function($a, $b) {
+                        return strcmp(urlencode($a), urlencode($b));
+                    });
                     $data[$key] = self::prepareParameters($value);
                     break;
                 case 'boolean':

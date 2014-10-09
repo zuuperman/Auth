@@ -8,8 +8,6 @@ namespace CultuurNet\Auth\Command;
 use CultuurNet\Auth\ConsumerCredentials;
 use CultuurNet\Auth\Guzzle\Service as AuthService;
 use CultuurNet\Auth\TokenCredentials;
-use Guzzle\Log\ClosureLogAdapter;
-use Guzzle\Plugin\Log\LogPlugin;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 

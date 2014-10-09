@@ -8,6 +8,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class TokenCommand extends Command
 {
+    /**
+     * @var AuthServiceFactory
+     */
+    protected $authServiceFactory;
+
+    public function __construct($name = null)
+    {
+        parent::__construct($name);
+        $this->authServiceFactory = new AuthServiceFactory();
+    }
+
     public function configure()
     {
         $this
@@ -35,7 +46,12 @@ class TokenCommand extends Command
 
         $authBaseUrl = $this->resolveBaseUrl('auth', $in);
 
-        $authService = AuthServiceFactory::createAuthService($in, $out, $authBaseUrl, $consumer);
+        $authService = $this->authServiceFactory->createService(
+          $in,
+          $out,
+          $authBaseUrl,
+          $consumer
+        );
 
         $temporaryCredentials = $authService->getRequestToken();
 

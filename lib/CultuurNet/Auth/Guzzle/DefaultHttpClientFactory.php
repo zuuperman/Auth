@@ -38,7 +38,7 @@ class DefaultHttpClientFactory implements HttpClientFactory
             );
         }
 
-        $oAuth = new OauthPlugin($oAuthConfig);
+        $oAuth = new OAuth($oAuthConfig);
 
         $requestFactory = new JavaHttpRequestFactory();
 

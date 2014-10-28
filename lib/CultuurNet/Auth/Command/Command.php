@@ -2,6 +2,7 @@
 
 namespace CultuurNet\Auth\Command;
 
+use CultuurNet\Auth\FileUtility;
 use \Symfony\Component\Console\Command\Command as BaseCommand;
 use \Symfony\Component\Console\Input\InputArgument;
 use \Symfony\Component\Console\Input\InputInterface;
@@ -28,6 +29,11 @@ abstract class Command extends BaseCommand
      * @var array
      */
     private $defaults;
+
+    /**
+     * @var FileUtility
+     */
+    private $fileUtility;
 
     /**
      * @return array
@@ -85,11 +91,21 @@ abstract class Command extends BaseCommand
             );
     }
 
+    protected function getFileUtility() {
+        if (!isset($this->fileUtility)) {
+            $this->fileUtility = new FileUtility();
+        }
+
+        return $this->fileUtility;
+    }
+
     protected function execute(InputInterface $in, OutputInterface $out)
     {
         $sessionFile = $in->getOption('session');
         if (NULL !== $sessionFile) {
             // @todo Catch JsonValidationException and show errors.
+            $fileUtility = $this->getFileUtility();
+            $sessionFile = $fileUtility->expandPath($sessionFile);
             $this->session = JsonSessionFile::read($sessionFile);
         }
         else {
@@ -125,7 +141,7 @@ abstract class Command extends BaseCommand
     /**
      *
      */
-    protected function resolveBaseUrl($api, InputInterface $in = NULL, $default = 'http://test.uitid.be/culturefeed/rest')
+    protected function resolveBaseUrl($api, InputInterface $in = NULL, $default = 'http://acc.uitid.be/uitid/rest')
     {
         if (NULL === $this->session) {
             // @todo throw exception as session isn't initialized yet

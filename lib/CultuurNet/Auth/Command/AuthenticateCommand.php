@@ -49,7 +49,7 @@ class AuthenticateCommand extends Command
                 'callback',
                 NULL,
                 InputOption::VALUE_REQUIRED,
-                'OAuth callback, for demonstrational purposes',
+                'OAuth callback, for demonstration purposes',
                 'http://example.com'
             );
     }

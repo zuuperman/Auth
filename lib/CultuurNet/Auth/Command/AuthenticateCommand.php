@@ -60,38 +60,19 @@ class AuthenticateCommand extends Command
      * @return Service
      */
     private function getAuthService(
+        InputInterface $input,
         OutputInterface $output,
         $baseUrl,
         ConsumerCredentials $consumerCredentials
     ) {
-        $baseFactory = new OAuthJavaWebServicesClientFactory();
-        $logSubscriberAttachingFactory = new SubscriberAttachingOAuthClientFactory(
-            $baseFactory,
-            [
-                new LogSubscriber(
-                    new ConsoleLogger(
-                        $output
-                    ),
-                    Formatter::DEBUG
-                ),
-            ]
-        );
+        $authServiceFactory = new AuthServiceFactory();
 
-        $client = $logSubscriberAttachingFactory->createClient(
+        return $authServiceFactory->createService(
+            $input,
+            $output,
             $baseUrl,
             $consumerCredentials
         );
-
-        $authService = new Service(
-            $client,
-            new SimpleUserAuthenticatedClientFactory(
-                $logSubscriberAttachingFactory,
-                $baseUrl,
-                $consumerCredentials
-            )
-        );
-
-        return $authService;
     }
 
     /**
@@ -112,6 +93,7 @@ class AuthenticateCommand extends Command
         $baseUrl = $this->resolveBaseUrl('auth', $in);
 
         $authService = $this->getAuthService(
+            $in,
             $out,
             $baseUrl,
             $consumerCredentials

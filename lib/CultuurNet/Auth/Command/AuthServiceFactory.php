@@ -7,13 +7,13 @@ namespace CultuurNet\Auth\Command;
 
 use CultuurNet\Auth\ConsumerCredentials;
 use CultuurNet\Auth\Guzzle\Service as AuthService;
+use CultuurNet\Auth\Guzzle\SimpleUserAuthenticatedClientFactory;
 use CultuurNet\Auth\TokenCredentials;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AuthServiceFactory extends CommandLineServiceFactory
 {
-    
     /**
      * @inheritdoc
      *
@@ -23,12 +23,25 @@ class AuthServiceFactory extends CommandLineServiceFactory
       InputInterface $in,
       OutputInterface $out,
       $baseUrl,
-      ConsumerCredentials $consumer,
-      TokenCredentials $token = null)
-    {
-        $service = new AuthService($baseUrl, $consumer);
+      ConsumerCredentials $consumerCredentials,
+      TokenCredentials $tokenCredentials = null
+    ) {
+        $factory = $this->getOAuthClientFactory($out);
 
-        $this->registerSubscribers($in, $out, $service);
+        $client = $factory->createClient(
+            $baseUrl,
+            $consumerCredentials,
+            $tokenCredentials
+        );
+
+        $service = new AuthService(
+            $client,
+            new SimpleUserAuthenticatedClientFactory(
+                $factory,
+                $baseUrl,
+                $consumerCredentials
+            )
+        );
 
         return $service;
     }

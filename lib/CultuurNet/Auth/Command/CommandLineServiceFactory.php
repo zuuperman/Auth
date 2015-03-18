@@ -13,7 +13,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class CommandLineServiceFactory {
+abstract class CommandLineServiceFactory
+{
 
     /**
      * Creates a service suitable for the command-line.
@@ -26,12 +27,12 @@ abstract class CommandLineServiceFactory {
      *
      * @return mixed
      */
-    public abstract function createService(
-      InputInterface $in,
-      OutputInterface $out,
-      $baseUrl,
-      ConsumerCredentials $consumer,
-      TokenCredentials $token = null
+    abstract public function createService(
+        InputInterface $in,
+        OutputInterface $out,
+        $baseUrl,
+        ConsumerCredentials $consumer,
+        TokenCredentials $token = null
     );
 
     /**
@@ -56,4 +57,4 @@ abstract class CommandLineServiceFactory {
 
         return $logSubscriberAttachingFactory;
     }
-} 
+}

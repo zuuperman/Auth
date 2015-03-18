@@ -22,7 +22,10 @@ interface ServiceInterface
      * @return string
      *   The URL of the authorization page.
      */
-    public function getAuthorizeUrl(TokenCredentials $requestTokenPair, AuthorizeOptions $options = NULL);
+    public function getAuthorizeUrl(
+        TokenCredentials $requestTokenPair,
+        AuthorizeOptions $options = null
+    );
 
     /**
      * @param string $oAuthToken

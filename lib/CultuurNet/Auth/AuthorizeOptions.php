@@ -49,8 +49,8 @@ class AuthorizeOptions
     {
         $this->type = self::TYPE_REGULAR;
 
-        $this->skipConfirmation = FALSE;
-        $this->skipAuthorization = FALSE;
+        $this->skipConfirmation = false;
+        $this->skipAuthorization = false;
     }
 
     /**
@@ -81,7 +81,8 @@ class AuthorizeOptions
      * @param string $type
      * @return AuthorizeOptions
      */
-    public function setType($type) {
+    public function setType($type)
+    {
         // @todo Throw exception if invalid type.
 
         $this->type = $type;
@@ -101,7 +102,7 @@ class AuthorizeOptions
      * @param bool $toggle;
      * @return AuthorizeOptions
      */
-    public function setSkipConfirmation($toggle = TRUE)
+    public function setSkipConfirmation($toggle = true)
     {
         $this->skipConfirmation = $toggle;
         return $this;
@@ -116,7 +117,7 @@ class AuthorizeOptions
      * @param bool $toggle
      * @return AuthorizeOptions
      */
-    public function setSkipAuthorization($toggle = TRUE)
+    public function setSkipAuthorization($toggle = true)
     {
         $this->skipAuthorization = $toggle;
         return $this;

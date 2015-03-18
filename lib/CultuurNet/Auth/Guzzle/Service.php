@@ -32,7 +32,8 @@ class Service implements ServiceInterface
     /**
      * @inheritdoc
      */
-    public function getRequestToken($callback = NULL) {
+    public function getRequestToken($callback = null)
+    {
         $request = $this->client->createRequest(
             'POST',
             'requestToken'
@@ -48,7 +49,9 @@ class Service implements ServiceInterface
         $response = $this->client->send($request);
 
         // @todo Check for status 400 or 401 and throw an appropriate exception.
-        // @todo Any other non-200 code is unexpected according to http://oauth.net/core/1.0a/ and should cause another kind of exception to be thrown.
+        // @todo Any other non-200 code is unexpected according to
+        // http://oauth.net/core/1.0a/ and should cause another kind of
+        // exception to be thrown.
 
         if ($response->getHeader('Content-Type') != 'application/x-www-form-urlencoded') {
             // @todo throw exception
@@ -84,7 +87,7 @@ class Service implements ServiceInterface
      */
     public function getAuthorizeUrl(
         TokenCredentials $temporaryCredentials,
-        AuthorizeOptions $options = NULL
+        AuthorizeOptions $options = null
     ) {
         $url = Url::fromString($this->client->getBaseUrl());
 
@@ -113,7 +116,10 @@ class Service implements ServiceInterface
      *   The 'oauth_verifier' that was retrieved in the OAUth authorization step.
      * @return User
      */
-    public function getAccessToken(TokenCredentials $temporaryCredentials, $oAuthVerifier) {
+    public function getAccessToken(
+        TokenCredentials $temporaryCredentials,
+        $oAuthVerifier
+    ) {
         $temporaryClient = $this->clientFactory->createClient($temporaryCredentials);
 
         $request = $temporaryClient->createRequest('POST', 'accessToken');

@@ -30,9 +30,8 @@ class JsonSessionFile implements SessionFileInterface
 
         $data = json_decode($json);
 
-        // @todo Throw an exception if unable to parse.
         if (null === $data && JSON_ERROR_NONE !== json_last_error()) {
-
+            // @todo Throw an exception if unable to parse.
         }
 
         self::validateSchema($data, $path);
@@ -70,7 +69,7 @@ class JsonSessionFile implements SessionFileInterface
         $hash = array();
 
         $consumerCredentials = $session->getConsumerCredentials();
-        if (NULL != $consumerCredentials) {
+        if (null != $consumerCredentials) {
             $hash['consumer'] = array(
                 'key' => $consumerCredentials->getKey(),
                 'secret' => $consumerCredentials->getSecret(),
@@ -78,7 +77,7 @@ class JsonSessionFile implements SessionFileInterface
         }
 
         $user = $session->getUser();
-        if (NULL !== $user) {
+        if (null !== $user) {
             $hash['user'] = array(
                 'id' => $user->getId(),
                 'token' => $user->getTokenCredentials()->getToken(),

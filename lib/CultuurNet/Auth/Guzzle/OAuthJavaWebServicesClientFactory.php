@@ -65,7 +65,8 @@ class OAuthJavaWebServicesClientFactory implements OAuthClientFactory
      *
      * @return array
      */
-    private function getClientConfig($baseUrl) {
+    private function getClientConfig($baseUrl)
+    {
         $config = [
             'base_url' => $baseUrl,
             'message_factory' => new DuplicateAggregatorQueryMessageFactory(),

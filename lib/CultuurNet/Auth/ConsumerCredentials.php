@@ -14,7 +14,7 @@ class ConsumerCredentials
      */
     protected $secret;
 
-    public function __construct($key = NULL, $secret = NULL)
+    public function __construct($key = null, $secret = null)
     {
         if ($key) {
             $this->setKey($key);

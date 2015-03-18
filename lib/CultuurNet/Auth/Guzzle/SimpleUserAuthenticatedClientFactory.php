@@ -48,5 +48,4 @@ class SimpleUserAuthenticatedClientFactory implements UserAuthenticatedClientFac
             $tokenCredentials
         );
     }
-
 }

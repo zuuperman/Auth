@@ -22,7 +22,7 @@ class FileUtility
     public function __construct()
     {
         if (function_exists('posix_getuid')) {
-            $this->expandTilde = TRUE;
+            $this->expandTilde = true;
 
             $info = posix_getpwuid(posix_getuid());
             $this->userHomeDir = $info['dir'];

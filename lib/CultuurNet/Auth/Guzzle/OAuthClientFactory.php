@@ -18,8 +18,8 @@ interface OAuthClientFactory
      * @return Client
      */
     public function createClient(
-      $baseUrl,
-      ConsumerCredentials $credentials,
-      TokenCredentials $tokenCredentials = null
+        $baseUrl,
+        ConsumerCredentials $credentials,
+        TokenCredentials $tokenCredentials = null
     );
 }

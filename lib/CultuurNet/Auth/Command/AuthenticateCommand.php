@@ -15,6 +15,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Subscriber\Log\Formatter;
 use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use GuzzleHttp\Url;
+use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Logger\ConsoleLogger;
@@ -29,7 +30,7 @@ class AuthenticateCommand extends Command
             ->setDescription('Perform OAuth authentication')
             ->addOption(
                 'base-url',
-                NULL,
+                null,
                 InputOption::VALUE_REQUIRED,
                 'Base URL of the UiTiD service provider to authenticate with'
             )
@@ -47,7 +48,7 @@ class AuthenticateCommand extends Command
             )
             ->addOption(
                 'callback',
-                NULL,
+                null,
                 InputOption::VALUE_REQUIRED,
                 'OAuth callback, for demonstration purposes',
                 'http://example.com'
@@ -80,7 +81,10 @@ class AuthenticateCommand extends Command
      * @param InputInterface $in
      * @return TokenCredentials
      */
-    private function getRequestToken($authService, $in) {
+    private function getRequestToken(
+        ServiceInterface $authService,
+        InputInterface $in
+    ) {
         $callback = $in->getOption('callback');
         return $authService->getRequestToken($callback);
     }
@@ -120,7 +124,7 @@ class AuthenticateCommand extends Command
         $out->writeln('access token secret: ' . $user->getTokenCredentials()->getSecret());
 
         $sessionFile = $in->getOption('session');
-        if (NULL !== $sessionFile) {
+        if (null !== $sessionFile) {
             JsonSessionFile::write($this->session, $sessionFile);
         }
     }
@@ -158,11 +162,11 @@ class AuthenticateCommand extends Command
         /* @var \Symfony\Component\Console\Helper\DialogHelper $dialog */
         $dialog = $this->getHelperSet()->get('dialog');
 
-        while (NULL === $user) {
+        while (null === $user) {
             $user = $dialog->ask($out, 'User name: ');
         }
 
-        while (NULL === $password) {
+        while (null === $password) {
             $password = $dialog->askHiddenResponse($out, 'Password: ');
         }
 

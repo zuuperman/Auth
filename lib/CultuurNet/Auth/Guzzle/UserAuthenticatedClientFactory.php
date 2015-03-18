@@ -5,7 +5,6 @@
 
 namespace CultuurNet\Auth\Guzzle;
 
-
 use CultuurNet\Auth\TokenCredentials;
 use GuzzleHttp\Client;
 

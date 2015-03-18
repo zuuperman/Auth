@@ -20,11 +20,11 @@ class AuthServiceFactory extends CommandLineServiceFactory
      * @return AuthService
      */
     public function createService(
-      InputInterface $in,
-      OutputInterface $out,
-      $baseUrl,
-      ConsumerCredentials $consumerCredentials,
-      TokenCredentials $tokenCredentials = null
+        InputInterface $in,
+        OutputInterface $out,
+        $baseUrl,
+        ConsumerCredentials $consumerCredentials,
+        TokenCredentials $tokenCredentials = null
     ) {
         $factory = $this->getOAuthClientFactory($out);
 

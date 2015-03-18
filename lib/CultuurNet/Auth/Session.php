@@ -71,9 +71,8 @@ class Session
         // @todo check type of $api
         if (isset($this->baseUrls[$api])) {
             return $this->baseUrls[$api];
-        }
-        else {
-            return NULL;
+        } else {
+            return null;
         }
     }
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CultuurNet\Auth" default="test">
+    <fileset id="php" dir=".">
+        <include name="**/*.php"/>
+        <exclude name="vendor/"/>
+    </fileset>
+
+    <target name="test">
+        <exec command="composer validate" passthru="true" />
+        <phplint>
+            <fileset refid="php"/>
+        </phplint>
+        <phpunit
+                configuration="phpunit.xml.dist"
+                haltonfailure="true"
+                printsummary="true">
+            <batchtest>
+                <fileset dir="tests">
+                    <include name="*Test.php"/>
+                </fileset>
+            </batchtest>
+        </phpunit>
+        <phpcodesniffer
+                standard="PSR2"
+                format="full"
+                allowedFileExtensions="php"
+                haltonerror="true">
+            <fileset refid="php"/>
+        </phpcodesniffer>
+    </target>
+</project>

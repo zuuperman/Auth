@@ -7,7 +7,7 @@
         "guzzlehttp/guzzle": "~5.2",
         "guzzlehttp/oauth-subscriber": "~0.2",
         "guzzlehttp/log-subscriber": "~1.0",
-        "symfony/console": "~2.2",
+        "symfony/console": "~2.5",
         "symfony/event-dispatcher": "~2.6",
         "justinrainbow/json-schema": "~1.3"
     },

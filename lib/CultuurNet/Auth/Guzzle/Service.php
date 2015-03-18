@@ -2,54 +2,68 @@
 
 namespace CultuurNet\Auth\Guzzle;
 
-use \CultuurNet\Auth\AuthorizeOptions;
-use \CultuurNet\Auth\ServiceInterface;
-use \CultuurNet\Auth\ConsumerCredentials;
-use \CultuurNet\Auth\TokenCredentials;
-use \CultuurNet\Auth\User;
+use CultuurNet\Auth\AuthorizeOptions;
+use CultuurNet\Auth\ServiceInterface;
+use CultuurNet\Auth\TokenCredentials;
+use CultuurNet\Auth\User;
+use GuzzleHttp\Client;
+use GuzzleHttp\Post\PostBodyInterface;
+use GuzzleHttp\Url;
 
-use \Guzzle\Http\Client;
-use \Guzzle\Http\Url;
-use \Guzzle\Plugin\Oauth\OauthPlugin;
-
-
-class Service extends OAuthProtectedService implements ServiceInterface
+class Service implements ServiceInterface
 {
+    use ContainsClient;
+
     /**
-     * @param string $baseUrl
-     * @param ConsumerCredentials $consumerCredentials
+     * @var UserAuthenticatedClientFactory
      */
-    public function __construct($baseUrl, ConsumerCredentials $consumerCredentials)
+    private $clientFactory;
+
+    /**
+     * @param Client $client
+     */
+    public function __construct($client, UserAuthenticatedClientFactory $clientFactory)
     {
-        parent::__construct($baseUrl, $consumerCredentials);
+        $this->setClient($client);
+
+        $this->clientFactory = $clientFactory;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getRequestToken($callback = NULL) {
-        $data = array();
+        $request = $this->client->createRequest(
+            'POST',
+            'requestToken'
+        );
+
+        /** @var PostBodyInterface $body */
+        $body = $request->getBody();
+
         if ($callback) {
-            $data['oauth_callback'] = $callback;
+            $body->setField('oauth_callback', $callback);
         }
 
-        $client = $this->getClient();
-
-        $request = $client->post('requestToken', NULL, $data);
-
-        $response = $request->send();
+        $response = $this->client->send($request);
 
         // @todo Check for status 400 or 401 and throw an appropriate exception.
         // @todo Any other non-200 code is unexpected according to http://oauth.net/core/1.0a/ and should cause another kind of exception to be thrown.
 
-        if ($response->getContentType() != 'application/x-www-form-urlencoded') {
+        if ($response->getHeader('Content-Type') != 'application/x-www-form-urlencoded') {
             // @todo throw exception
         }
 
-        parse_str($response->getBody(TRUE), $q);
+        $body = $response->getBody();
+
+        parse_str((string) $body, $q);
 
         // @todo check if valid response
         $token = $q['oauth_token'];
         $secret = $q['oauth_token_secret'];
 
-        if (!isset($q['oauth_callback_confirmed']) || $q['oauth_callback_confirmed'] !== 'true') {
+        if (!isset($q['oauth_callback_confirmed']) ||
+            $q['oauth_callback_confirmed'] !== 'true') {
             // @todo throw an exception
         }
 
@@ -68,19 +82,24 @@ class Service extends OAuthProtectedService implements ServiceInterface
      * @return string
      *   The URL of the authorization page.
      */
-    public function getAuthorizeUrl(TokenCredentials $temporaryCredentials, AuthorizeOptions $options = NULL) {
-        // @todo check if token is not empty
+    public function getAuthorizeUrl(
+        TokenCredentials $temporaryCredentials,
+        AuthorizeOptions $options = NULL
+    ) {
+        $url = Url::fromString($this->client->getBaseUrl());
+
         if ($options) {
-            $query = AuthorizeOptionsQueryString::fromAuthorizeOptions($options);
-        }
-        else {
-            $query = new AuthorizeOptionsQueryString();
+            $url->setQuery(
+                AuthorizeOptionsQueryFactory::createQueryFromAuthorizeOptions(
+                    $options
+                )
+            );
         }
 
-        $query->set('oauth_token', $temporaryCredentials->getToken());
-
-        $url = $this->getUrlForPath('auth/authorize');
-        $url->setQuery($query);
+        $url->getQuery()->set(
+            'oauth_token',
+            $temporaryCredentials->getToken()
+        );
 
         return (string) $url;
     }
@@ -95,21 +114,23 @@ class Service extends OAuthProtectedService implements ServiceInterface
      * @return User
      */
     public function getAccessToken(TokenCredentials $temporaryCredentials, $oAuthVerifier) {
-        $data = array(
-            'oauth_verifier' => $oAuthVerifier,
-        );
+        $temporaryClient = $this->clientFactory->createClient($temporaryCredentials);
 
-        $httpClientFactory = $this->getHttpClientFactory();
-        $client = $httpClientFactory->createClient($this->baseUrl, $this->consumerCredentials, $temporaryCredentials);
+        $request = $temporaryClient->createRequest('POST', 'accessToken');
 
-        $response = $client->post('accessToken', NULL, $data)->send();
-        if ($response->getContentType() != 'application/x-www-form-urlencoded') {
+        /** @var PostBodyInterface $body */
+        $body = $request->getBody();
+        $body->setField('oauth_verifier', $oAuthVerifier);
+
+        $response = $this->client->send($request);
+
+        if ($response->getHeader('Content-Type') != 'application/x-www-form-urlencoded') {
             // @todo throw exception
         }
 
-        $body = $response->getBody(TRUE);
+        $body = $response->getBody();
 
-        parse_str($body, $q);
+        parse_str((string) $body, $q);
         // @todo check if valid response
         $token = $q['oauth_token'];
         $secret = $q['oauth_token_secret'];
@@ -121,6 +142,4 @@ class Service extends OAuthProtectedService implements ServiceInterface
 
         return $user;
     }
-
-    // @todo add method for registering a PSR-3 compliant logger
 }

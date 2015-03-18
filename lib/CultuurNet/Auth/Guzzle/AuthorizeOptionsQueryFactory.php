@@ -3,16 +3,19 @@
 namespace CultuurNet\Auth\Guzzle;
 
 use \CultuurNet\Auth\AuthorizeOptions;
-use \Guzzle\Http\QueryString;
+use GuzzleHttp\Query;
 
-class AuthorizeOptionsQueryString extends QueryString
+class AuthorizeOptionsQueryFactory
 {
     /**
-     * return AuthorizeOptionsQueryString
+     * @param AuthorizeOptions $options
+     *
+     * @return Query
      */
-    public static function fromAuthorizeOptions(AuthorizeOptions $options)
+    public static function createQueryFromAuthorizeOptions(AuthorizeOptions $options)
     {
-        $q = new static();
+        $q = new Query();
+        $q->setAggregator($q::duplicateAggregator());
 
         $q->set('type', $options->getType());
 

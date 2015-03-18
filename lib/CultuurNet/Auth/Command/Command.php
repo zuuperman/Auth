@@ -165,6 +165,10 @@ abstract class Command extends BaseCommand
             $baseUrl = $this->session->getBaseUrl($api);
         }
 
+        if (substr($baseUrl, -1, 1) !== '/') {
+            $baseUrl .= '/';
+        }
+
         return $baseUrl;
     }
 }

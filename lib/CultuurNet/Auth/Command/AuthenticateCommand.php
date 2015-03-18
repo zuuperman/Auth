@@ -2,23 +2,23 @@
 
 namespace CultuurNet\Auth\Command;
 
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Input\InputInterface;
-use \Symfony\Component\Console\Output\OutputInterface;
-use \Symfony\Component\Console\Output\ConsoleOutputInterface;
-
-use \Guzzle\Http\Client;
-use \Guzzle\Http\Url;
-
-use \Guzzle\Log\ClosureLogAdapter;
-
-use \Guzzle\Plugin\Cookie\CookiePlugin;
-use \Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
-
-use \Guzzle\Plugin\Log\LogPlugin;
-
-use \CultuurNet\Auth\Guzzle\Service;
-use \CultuurNet\Auth\Session\JsonSessionFile;
+use CultuurNet\Auth\ConsumerCredentials;
+use CultuurNet\Auth\Guzzle\SubscriberAttachingOAuthClientFactory;
+use CultuurNet\Auth\Guzzle\OAuthJavaWebServicesClientFactory;
+use CultuurNet\Auth\Guzzle\OAuthJavaWebServicesUserAuthenticatedClientFactory;
+use CultuurNet\Auth\Guzzle\Service;
+use CultuurNet\Auth\Guzzle\SimpleUserAuthenticatedClientFactory;
+use CultuurNet\Auth\ServiceInterface;
+use CultuurNet\Auth\Session\JsonSessionFile;
+use CultuurNet\Auth\TokenCredentials;
+use GuzzleHttp\Client;
+use GuzzleHttp\Subscriber\Log\Formatter;
+use GuzzleHttp\Subscriber\Log\LogSubscriber;
+use GuzzleHttp\Url;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Logger\ConsoleLogger;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class AuthenticateCommand extends Command
 {
@@ -51,51 +51,130 @@ class AuthenticateCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'OAuth callback, for demonstrational purposes',
                 'http://example.com'
-            )
-            ->addOption(
-                'debug',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Output full HTTP traffic for debugging purposes'
             );
+    }
+
+    /**
+     * @param string $baseUrl
+     * @param ConsumerCredentials $consumerCredentials
+     * @return Service
+     */
+    private function getAuthService(
+        OutputInterface $output,
+        $baseUrl,
+        ConsumerCredentials $consumerCredentials
+    ) {
+        $baseFactory = new OAuthJavaWebServicesClientFactory();
+        $logSubscriberAttachingFactory = new SubscriberAttachingOAuthClientFactory(
+            $baseFactory,
+            [
+                new LogSubscriber(
+                    new ConsoleLogger(
+                        $output
+                    ),
+                    Formatter::DEBUG
+                ),
+            ]
+        );
+
+        $client = $logSubscriberAttachingFactory->createClient(
+            $baseUrl,
+            $consumerCredentials
+        );
+
+        $authService = new Service(
+            $client,
+            new SimpleUserAuthenticatedClientFactory(
+                $logSubscriberAttachingFactory,
+                $baseUrl,
+                $consumerCredentials
+            )
+        );
+
+        return $authService;
+    }
+
+    /**
+     * @param ServiceInterface $authService
+     * @param InputInterface $in
+     * @return TokenCredentials
+     */
+    private function getRequestToken($authService, $in) {
+        $callback = $in->getOption('callback');
+        return $authService->getRequestToken($callback);
     }
 
     protected function execute(InputInterface $in, OutputInterface $out)
     {
         parent::execute($in, $out);
 
-        $consumer = $this->session->getConsumerCredentials();
+        $consumerCredentials = $this->session->getConsumerCredentials();
+        $baseUrl = $this->resolveBaseUrl('auth', $in);
 
-        $authBaseUrl = $this->resolveBaseUrl('auth', $in);
+        $authService = $this->getAuthService(
+            $out,
+            $baseUrl,
+            $consumerCredentials
+        );
 
-        $authService = new Service($authBaseUrl, $consumer);
+        $temporaryCredentials = $this->getRequestToken(
+            $authService,
+            $in
+        );
 
-        if (TRUE == $in->getOption('debug')) {
-            $adapter = new ClosureLogAdapter(function ($message, $priority, $extras) use ($out) {
-                // @todo handle $priority
-                $out->writeln($message);
-            });
-            $format = "\n\n# Request:\n{request}\n\n# Response:\n{response}\n\n# Errors: {curl_code} {curl_error}\n\n";
-            $log = new LogPlugin($adapter, $format);
+        $oAuthVerifier = $this->getOAuthVerifier(
+            $baseUrl,
+            $temporaryCredentials,
+            $in,
+            $out
+        );
 
-            $authService->getHttpClientFactory()->addSubscriber($log);
+        $user = $authService->getAccessToken($temporaryCredentials, $oAuthVerifier);
+
+        $this->session->setUser($user);
+
+        $out->writeln('user id: ' . $user->getId());
+        $out->writeln('access token: ' . $user->getTokenCredentials()->getToken());
+        $out->writeln('access token secret: ' . $user->getTokenCredentials()->getSecret());
+
+        $sessionFile = $in->getOption('session');
+        if (NULL !== $sessionFile) {
+            JsonSessionFile::write($this->session, $sessionFile);
         }
+    }
 
-        $callback = $in->getOption('callback');
+    /**
+     * Gets the OAauth token verifier by logging in on the website.
+     *
+     * @param string $baseUrl
+     * @param TokenCredentials $temporaryCredentials
+     * @param InputInterface $in
+     * @param OutputInterface $out
+     * @return string the OAuth token verifier.
+     */
+    private function getOAuthVerifier(
+        $baseUrl,
+        TokenCredentials $temporaryCredentials,
+        InputInterface $in,
+        OutputInterface $out
+    ) {
+        $client = new Client(
+            [
+                'base_url' => $baseUrl,
+                'defaults' => [
+                    'allow_redirects' => false,
+                    'cookies' => true,
+                ],
+            ]
+        );
 
-        $temporaryCredentials = $authService->getRequestToken($callback);
-
-        $client = new Client($authBaseUrl, array('redirect.disable' => true));
-
-        // @todo check if logging in on UiTiD requires cookies?
-        $cookiePlugin = new CookiePlugin(new ArrayCookieJar());
-        $client->addSubscriber($cookiePlugin);
+        // @todo Register log subscriber as well on this client?
 
         $user = $in->getOption('username');
         $password = $in->getOption('password');
 
-        $dialog = $this->getHelperSet()->get('dialog');
         /* @var \Symfony\Component\Console\Helper\DialogHelper $dialog */
+        $dialog = $this->getHelperSet()->get('dialog');
 
         while (NULL === $user) {
             $user = $dialog->ask($out, 'User name: ');
@@ -112,7 +191,12 @@ class AuthenticateCommand extends Command
             'token' => $temporaryCredentials->getToken(),
         );
 
-        $response = $client->post('auth/login', NULL, $postData)->send();
+        $client->post(
+            'auth/login',
+            [
+                'body' => $postData
+            ]
+        );
 
         // @todo check what happens if the app is already authorized
 
@@ -121,24 +205,19 @@ class AuthenticateCommand extends Command
             'token' => $temporaryCredentials->getToken(),
         );
 
-        $response = $client->post('auth/authorize', NULL, $postData)->send();
+        $response = $client->post(
+            'auth/authorize',
+            [
+                'body' => $postData
+            ]
+        );
 
-        $location = $response->getHeader('Location', true);
+        $location = $response->getHeader('Location');
 
-        $url = Url::factory($location);
+        $url = Url::fromString($location);
 
         $oAuthVerifier = $url->getQuery()->get('oauth_verifier');
 
-        $user = $authService->getAccessToken($temporaryCredentials, $oAuthVerifier);
-        $this->session->setUser($user);
-
-        $out->writeln('user id: ' . $user->getId());
-        $out->writeln('access token: ' . $user->getTokenCredentials()->getToken());
-        $out->writeln('access token secret: ' . $user->getTokenCredentials()->getSecret());
-
-        $sessionFile = $in->getOption('session');
-        if (NULL !== $sessionFile) {
-            JsonSessionFile::write($this->session, $sessionFile);
-        }
+        return $oAuthVerifier;
     }
 }

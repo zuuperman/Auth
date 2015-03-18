@@ -14,6 +14,17 @@ class ConsumerCredentials
      */
     protected $secret;
 
+    public function __construct($key = NULL, $secret = NULL)
+    {
+        if ($key) {
+            $this->setKey($key);
+        }
+
+        if ($secret) {
+            $this->setSecret($secret);
+        }
+    }
+
     public function setKey($key)
     {
         // @todo check type

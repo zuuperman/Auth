@@ -3,11 +3,13 @@
 
 use Symfony\Component\Console\Application;
 use CultuurNet\Auth\Command\AuthenticateCommand;
+use CultuurNet\Auth\Command\TokenCommand;
 
 require 'vendor/autoload.php';
 
 $app = new Application();
 
 $app->add(new AuthenticateCommand());
+$app->add(new TokenCommand());
 
 $app->run();

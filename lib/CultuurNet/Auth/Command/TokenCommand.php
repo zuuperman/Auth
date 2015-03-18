@@ -29,12 +29,6 @@ class TokenCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Base URL of the UiTiD service provider to authenticate with'
-            )
-            ->addOption(
-                'debug',
-                null,
-                InputOption::VALUE_NONE,
-                'Output full HTTP traffic for debugging purposes'
             );
     }
 

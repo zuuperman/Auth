@@ -3,6 +3,12 @@ CultuurNet\Auth is a PHP library implementing
 * the consumer-side of the authentication flow of CultuurNet's UiTiD, which is based on [OAuth 1.0a Core][oauth_core]
 * a solid base for consumers of various OAuth-protected resources provided by CultuurNet
 
+Which version to use?
+=====================
+
+The 2.x version of CultuurNet\Auth uses Guzzle 5.x and is still in development. Many of the packages relying on CultuurNet\Auth haven't been updated yet to support version 2.x. For production usage, you should stick to
+version 1.x.
+
 Prerequisites
 =============
 

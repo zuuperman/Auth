@@ -16,7 +16,7 @@
                 printsummary="true">
             <batchtest>
                 <fileset dir="tests">
-                    <include name="*Test.php"/>
+                    <include name="**/*Test.php"/>
                 </fileset>
             </batchtest>
         </phpunit>

@@ -38,13 +38,16 @@ class DefaultHttpClientFactory implements HttpClientFactory
             );
         }
 
-        $oAuth = new OauthPlugin($oAuthConfig);
+        $oAuth = new OAuth($oAuthConfig);
+
+        $requestFactory = new JavaHttpRequestFactory();
 
         $client = new Client();
 
         $client
             ->setBaseUrl($baseUrl)
-            ->addSubscriber($oAuth);
+            ->addSubscriber($oAuth)
+            ->setRequestFactory($requestFactory);
 
         foreach ($this->subscribers as $subscriber) {
             $client->addSubscriber($subscriber);

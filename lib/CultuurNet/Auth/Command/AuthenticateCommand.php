@@ -5,59 +5,67 @@ namespace CultuurNet\Auth\Command;
 use \Symfony\Component\Console\Input\InputOption;
 use \Symfony\Component\Console\Input\InputInterface;
 use \Symfony\Component\Console\Output\OutputInterface;
-use \Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 use \Guzzle\Http\Client;
 use \Guzzle\Http\Url;
 
-use \Guzzle\Log\ClosureLogAdapter;
-
 use \Guzzle\Plugin\Cookie\CookiePlugin;
 use \Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
 
-use \Guzzle\Plugin\Log\LogPlugin;
-
-use \CultuurNet\Auth\Guzzle\Service;
 use \CultuurNet\Auth\Session\JsonSessionFile;
 
 class AuthenticateCommand extends Command
 {
+    /**
+     * @var AuthServiceFactory
+     */
+    protected $authenticateServiceFactory;
+
+    /**
+     * @inheritdoc
+     */
+    public function __construct($name = null)
+    {
+        parent::__construct($name);
+        $this->authenticateServiceFactory = new AuthServiceFactory();
+    }
+
     protected function configure()
     {
         $this
-            ->setName('authenticate')
-            ->setDescription('Perform OAuth authentication')
-            ->addOption(
-                'base-url',
-                NULL,
-                InputOption::VALUE_REQUIRED,
-                'Base URL of the UiTiD service provider to authenticate with'
-            )
-            ->addOption(
-                'username',
-                'u',
-                InputOption::VALUE_REQUIRED,
-                'User name to authenticate with'
-            )
-            ->addOption(
-                'password',
-                'p',
-                InputOption::VALUE_REQUIRED,
-                'Password to authenticate with'
-            )
-            ->addOption(
-                'callback',
-                NULL,
-                InputOption::VALUE_REQUIRED,
-                'OAuth callback, for demonstrational purposes',
-                'http://example.com'
-            )
-            ->addOption(
-                'debug',
-                NULL,
-                InputOption::VALUE_NONE,
-                'Output full HTTP traffic for debugging purposes'
-            );
+          ->setName('authenticate')
+          ->setDescription('Perform OAuth authentication')
+          ->addOption(
+            'base-url',
+            NULL,
+            InputOption::VALUE_REQUIRED,
+            'Base URL of the UiTiD service provider to authenticate with'
+          )
+          ->addOption(
+            'username',
+            'u',
+            InputOption::VALUE_REQUIRED,
+            'User name to authenticate with'
+          )
+          ->addOption(
+            'password',
+            'p',
+            InputOption::VALUE_REQUIRED,
+            'Password to authenticate with'
+          )
+          ->addOption(
+            'callback',
+            NULL,
+            InputOption::VALUE_REQUIRED,
+            'OAuth callback, for demonstrational purposes',
+            'http://example.com'
+          )
+          ->addOption(
+            'debug',
+            NULL,
+            InputOption::VALUE_NONE,
+            'Output full HTTP traffic for debugging purposes'
+          );
     }
 
     protected function execute(InputInterface $in, OutputInterface $out)
@@ -68,18 +76,12 @@ class AuthenticateCommand extends Command
 
         $authBaseUrl = $this->resolveBaseUrl('auth', $in);
 
-        $authService = new Service($authBaseUrl, $consumer);
-
-        if (TRUE == $in->getOption('debug')) {
-            $adapter = new ClosureLogAdapter(function ($message, $priority, $extras) use ($out) {
-                // @todo handle $priority
-                $out->writeln($message);
-            });
-            $format = "\n\n# Request:\n{request}\n\n# Response:\n{response}\n\n# Errors: {curl_code} {curl_error}\n\n";
-            $log = new LogPlugin($adapter, $format);
-
-            $authService->getHttpClientFactory()->addSubscriber($log);
-        }
+        $authService = $this->authenticateServiceFactory->createService(
+          $in,
+          $out,
+          $authBaseUrl,
+          $consumer
+        );
 
         $callback = $in->getOption('callback');
 
@@ -106,10 +108,10 @@ class AuthenticateCommand extends Command
         }
 
         $postData = array(
-            'email' => $user,
-            'password' => $password,
-            'submit' => 'Aanmelden',
-            'token' => $temporaryCredentials->getToken(),
+          'email' => $user,
+          'password' => $password,
+          'submit' => 'Aanmelden',
+          'token' => $temporaryCredentials->getToken(),
         );
 
         $response = $client->post('auth/login', NULL, $postData)->send();
@@ -117,8 +119,8 @@ class AuthenticateCommand extends Command
         // @todo check what happens if the app is already authorized
 
         $postData = array(
-            'allow' => 'true',
-            'token' => $temporaryCredentials->getToken(),
+          'allow' => 'true',
+          'token' => $temporaryCredentials->getToken(),
         );
 
         $response = $client->post('auth/authorize', NULL, $postData)->send();

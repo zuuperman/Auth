@@ -4,12 +4,12 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=5.3.0",
-        "guzzle/http": "3.1.*",
-        "guzzle/plugin-oauth": "3.1.*",
-        "guzzle/plugin-cookie": "3.1.*",
-        "guzzle/plugin-log": "3.1.*",
-        "symfony/console": "2.2.*",
-        "justinrainbow/json-schema": "1.3.*"
+        "guzzle/http": "~3.9",
+        "guzzle/plugin-oauth": "~3.9",
+        "guzzle/plugin-cookie": "~3.9",
+        "guzzle/plugin-log": "~3.9",
+        "symfony/console": "~2.5",
+        "justinrainbow/json-schema": "~1.3"
     },
     "autoload": {
         "psr-0": {
@@ -19,7 +19,8 @@
     "bin": ["bin/cultuurnet-auth"],
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0.x-dev"
+            "dev-master": "1.0.x-dev",
+            "dev-develop": "1.1.x-dev"
         }
     }
 }

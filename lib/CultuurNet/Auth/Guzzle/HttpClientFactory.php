@@ -15,7 +15,7 @@ interface HttpClientFactory
    * @param string $baseUrl
    * @param ConsumerCredentials $consumer
    * @param TokenCredentials $tokenCredentials
-   * @param string $oauthCallback
+   * @param array $additionalOAuthParameters
    *
    * @return Client
    */
@@ -23,7 +23,7 @@ interface HttpClientFactory
       $baseUrl,
       ConsumerCredentials $consumer,
       TokenCredentials $tokenCredentials,
-      $oauthCallback = null
+      array $additionalOAuthParameters = array()
   );
 
 

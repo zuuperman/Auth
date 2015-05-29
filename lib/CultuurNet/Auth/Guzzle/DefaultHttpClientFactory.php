@@ -21,7 +21,7 @@ class DefaultHttpClientFactory implements HttpClientFactory
         $baseUrl,
         ConsumerCredentials $consumerCredentials,
         TokenCredentials $tokenCredentials = null,
-        $oauthCallback = null
+        array $additionalOAuthParameters = array()
     ) {
         $oAuthConfig = array(
             'consumer_key' => $consumerCredentials->getKey(),
@@ -35,9 +35,7 @@ class DefaultHttpClientFactory implements HttpClientFactory
             );
         }
 
-        if ($oauthCallback) {
-            $oAuthConfig['callback'] = $oauthCallback;
-        }
+        $oAuthConfig += $additionalOAuthParameters;
 
         $oAuth = new OAuth($oAuthConfig);
 

@@ -80,16 +80,17 @@ abstract class OAuthProtectedService
     }
 
     /**
+     * @param array $additionalOAuthParameters
      * @return Client
      */
-    protected function getClient($oauthCallback = null) {
-        if ($oauthCallback) {
+    protected function getClient(array $additionalOAuthParameters = array()) {
+        if ($additionalOAuthParameters) {
             $httpClientFactory = $this->getHttpClientFactory();
             return $httpClientFactory->createClient(
                 $this->baseUrl,
                 $this->consumerCredentials,
                 $this->tokenCredentials,
-                $oauthCallback
+                $additionalOAuthParameters
             );
         }
 

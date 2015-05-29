@@ -25,7 +25,9 @@ class Service extends OAuthProtectedService implements ServiceInterface
     }
 
     public function getRequestToken($callback = NULL) {
-        $client = $this->getClient($callback);
+        $client = $this->getClient(
+            array('callback' => $callback)
+        );
 
         $request = $client->post('requestToken');
 
@@ -90,14 +92,17 @@ class Service extends OAuthProtectedService implements ServiceInterface
      * @return User
      */
     public function getAccessToken(TokenCredentials $temporaryCredentials, $oAuthVerifier) {
-        $data = array(
-            'oauth_verifier' => $oAuthVerifier,
+        $httpClientFactory = $this->getHttpClientFactory();
+        $client = $httpClientFactory->createClient(
+            $this->baseUrl,
+            $this->consumerCredentials,
+            $temporaryCredentials,
+            array(
+                'verifier' => $oAuthVerifier
+            )
         );
 
-        $httpClientFactory = $this->getHttpClientFactory();
-        $client = $httpClientFactory->createClient($this->baseUrl, $this->consumerCredentials, $temporaryCredentials);
-
-        $response = $client->post('accessToken', NULL, $data)->send();
+        $response = $client->post('accessToken')->send();
         if ($response->getContentType() != 'application/x-www-form-urlencoded') {
             // @todo throw exception
         }

@@ -4,10 +4,7 @@ namespace CultuurNet\Auth\Guzzle;
 
 use CultuurNet\Auth\ConsumerCredentials;
 use CultuurNet\Auth\TokenCredentials;
-
 use Guzzle\Http\Client;
-use Guzzle\Plugin\Oauth\OauthPlugin;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DefaultHttpClientFactory implements HttpClientFactory
@@ -18,14 +15,14 @@ class DefaultHttpClientFactory implements HttpClientFactory
     protected $subscribers = array();
 
     /**
-     * @param string $baseUrl
-     * @param ConsumerCredentials $consumerCredentials
-     * @param TokenCredentials $tokenCredentials
-     *
-     * @return Client
+     * @inheritdoc
      */
-    public function createClient($baseUrl, ConsumerCredentials $consumerCredentials, TokenCredentials $tokenCredentials = null)
-    {
+    public function createClient(
+        $baseUrl,
+        ConsumerCredentials $consumerCredentials,
+        TokenCredentials $tokenCredentials = null,
+        $oauthCallback = null
+    ) {
         $oAuthConfig = array(
             'consumer_key' => $consumerCredentials->getKey(),
             'consumer_secret' => $consumerCredentials->getSecret(),
@@ -36,6 +33,10 @@ class DefaultHttpClientFactory implements HttpClientFactory
                 'token' => $tokenCredentials->getToken(),
                 'token_secret' => $tokenCredentials->getSecret(),
             );
+        }
+
+        if ($oauthCallback) {
+            $oAuthConfig['callback'] = $oauthCallback;
         }
 
         $oAuth = new OAuth($oAuthConfig);

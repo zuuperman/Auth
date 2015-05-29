@@ -15,10 +15,16 @@ interface HttpClientFactory
    * @param string $baseUrl
    * @param ConsumerCredentials $consumer
    * @param TokenCredentials $tokenCredentials
+   * @param string $oauthCallback
    *
    * @return Client
    */
-  public function createClient($baseUrl, ConsumerCredentials $consumer, TokenCredentials $tokenCredentials);
+  public function createClient(
+      $baseUrl,
+      ConsumerCredentials $consumer,
+      TokenCredentials $tokenCredentials,
+      $oauthCallback = null
+  );
 
 
     /**

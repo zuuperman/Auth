@@ -25,14 +25,9 @@ class Service extends OAuthProtectedService implements ServiceInterface
     }
 
     public function getRequestToken($callback = NULL) {
-        $data = array();
-        if ($callback) {
-            $data['oauth_callback'] = $callback;
-        }
+        $client = $this->getClient($callback);
 
-        $client = $this->getClient();
-
-        $request = $client->post('requestToken', NULL, $data);
+        $request = $client->post('requestToken');
 
         $response = $request->send();
 

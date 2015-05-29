@@ -82,10 +82,24 @@ abstract class OAuthProtectedService
     /**
      * @return Client
      */
-    protected function getClient() {
+    protected function getClient($oauthCallback = null) {
+        if ($oauthCallback) {
+            $httpClientFactory = $this->getHttpClientFactory();
+            return $httpClientFactory->createClient(
+                $this->baseUrl,
+                $this->consumerCredentials,
+                $this->tokenCredentials,
+                $oauthCallback
+            );
+        }
+
         if (!isset($this->client)) {
             $httpClientFactory = $this->getHttpClientFactory();
-            $this->client = $httpClientFactory->createClient($this->baseUrl, $this->consumerCredentials, $this->tokenCredentials);
+            $this->client = $httpClientFactory->createClient(
+                $this->baseUrl,
+                $this->consumerCredentials,
+                $this->tokenCredentials
+            );
         }
 
         return $this->client;

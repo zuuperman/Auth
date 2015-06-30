@@ -22,7 +22,7 @@ interface HttpClientFactory
   public function createClient(
       $baseUrl,
       ConsumerCredentials $consumer,
-      TokenCredentials $tokenCredentials,
+      TokenCredentials $tokenCredentials = null,
       array $additionalOAuthParameters = array()
   );
 

@@ -43,7 +43,12 @@ abstract class OAuthProtectedService
      */
     protected $eventDispatcher;
 
-  /**
+    /**
+     * @var EventSubscriberInterface[]
+     */
+    protected $subscribers;
+
+    /**
      * @param string $baseUrl
      * @param ConsumerCredentials $consumer
      * @param TokenCredentials $tokenCredentials
@@ -54,6 +59,7 @@ abstract class OAuthProtectedService
         $this->baseUrl = Url::factory($baseUrl);
         $this->consumerCredentials = $consumerCredentials;
         $this->tokenCredentials = $tokenCredentials;
+        $this->subscribers = array();
     }
 
     /**
@@ -86,12 +92,16 @@ abstract class OAuthProtectedService
     protected function getClient(array $additionalOAuthParameters = array()) {
         if ($additionalOAuthParameters) {
             $httpClientFactory = $this->getHttpClientFactory();
-            return $httpClientFactory->createClient(
+            $client = $httpClientFactory->createClient(
                 $this->baseUrl,
                 $this->consumerCredentials,
                 $this->tokenCredentials,
                 $additionalOAuthParameters
             );
+            foreach ($this->subscribers as $subscriber) {
+                $client->addSubscriber($subscriber);
+            }
+            return $client;
         }
 
         if (!isset($this->client)) {
@@ -101,6 +111,9 @@ abstract class OAuthProtectedService
                 $this->consumerCredentials,
                 $this->tokenCredentials
             );
+            foreach ($this->subscribers as $subscriber) {
+                $this->client->addSubscriber($subscriber);
+            }
         }
 
         return $this->client;
@@ -123,8 +136,13 @@ abstract class OAuthProtectedService
     public function addSubscriber(EventSubscriberInterface $subscriber) {
         $this->getEventDispatcher()->addSubscriber($subscriber);
 
-        // Also add the subscriber to the Guzzle HTTP client.
-        $this->getClient()->addSubscriber($subscriber);
+        // Also add the subscriber to the Guzzle HTTP client if it exists
+        // already, and any future HTTP clients initiated.
+        if (isset($this->client)) {
+            $this->getClient()->addSubscriber($subscriber);
+        }
+
+        $this->subscribers[] = $subscriber;
     }
 
   /**

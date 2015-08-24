@@ -15,6 +15,9 @@ use Guzzle\Http\QueryAggregator\DuplicateAggregator;
  */
 class JavaHttpRequestFactory extends RequestFactory
 {
+    /** @var string Class to instantiate for requests with a body */
+    protected $entityEnclosingRequestClass = 'CultuurNet\\Auth\\Guzzle\\EntityEnclosingRequest';
+
     /**
      * {@inheritdoc}
      */
